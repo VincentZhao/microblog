@@ -12,6 +12,7 @@
 #
 
 class User < ActiveRecord::Base
+  has_many :microposts, dependent: :destroy
   attr_accessible :name, :email, :password, :password_confirmation
   has_secure_password
   before_save :create_remember_token
@@ -23,6 +24,10 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }
                     
   validates :password, length: { minimum: 6 }
+
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
 
   private
 
